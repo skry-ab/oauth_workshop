@@ -11,6 +11,7 @@ import io.ktor.response.*
 import io.ktor.request.*
 import kotlinx.serialization.Serializable
 import java.net.URL
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Serializable
@@ -89,7 +90,21 @@ fun Application.configureRouting() {
             }
 
             get("/callback") {
+                val principal: OAuthAccessTokenResponse.OAuth2 = call.principal() ?: error("No principal returned")
 
+                // Not used in this example
+                val accessToken = principal.accessToken
+
+                val idTokenString = principal.extraParameters["id_token"] ?: error("No ID-token returned")
+
+                // Decode parts if you want to inspect them, or enter idTokenString on: https://www.jstoolset.com/jwt
+                val decoder = Base64.getUrlDecoder()
+                val jwtParts = idTokenString.split(".")
+                val header = (String(decoder.decode(jwtParts[0])))
+                val payload = String(decoder.decode(jwtParts[1]))
+                val signature = decoder.decode(jwtParts[2])
+
+                call.respondRedirect("http://localhost:3000/callback?token=$idTokenString")
             }
         }
     }
