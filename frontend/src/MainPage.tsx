@@ -55,6 +55,7 @@ const MainPage: React.FC<MainPageProps> = ({ token }) => {
           message
         }, {
           headers: {
+            "Authorization": `Bearer ${token}`
         }
       });
 
