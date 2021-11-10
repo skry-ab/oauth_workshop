@@ -24,7 +24,11 @@ const MessageItem: React.FC<MessageItemProps> = ({ message: { message, author } 
 const API_HOST = "http://127.0.0.1:8080";
 const MESSAGES_URL = `${API_HOST}/api/messages`;
 
-const MainPage: React.FC = () => {
+type MainPageProps = {
+  token?: string;
+};
+
+const MainPage: React.FC<MainPageProps> = ({ token }) => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -64,34 +68,48 @@ const MainPage: React.FC = () => {
     return Promise.resolve(null);
   };
 
+  const PostMessageForm = () => {
+    return (
+        <Formik
+          initialValues={{ message: '' }}
+          onSubmit={async ({ message }) => postMessage(message)}
+        >
+          {
+            ({ values, handleChange }) => (
+              <Form>
+                <Stack direction='row' alignItems='center' gap={1}>
+                  <TextField
+                    fullWidth={true}
+                    name='message'
+                    label='Message'
+                    value={values.message}
+                    onChange={handleChange}
+                  />
+                  <Button variant='contained' type='submit'>
+                    Add
+                  </Button>
+                </Stack>
+              </Form>
+            )
+          }
+        </Formik>
+    );
+  };
+
   return (
       <Container>
         <Card sx={{ marginTop: "1em" }}>
           <CardHeader title='Shoutbox'/>
           <CardContent>
-            <Formik
-              initialValues={{ message: '' }}
-              onSubmit={async ({ message }) => postMessage(message)}
-            >
-              {
-                ({ values, handleChange }) => (
-                  <Form>
-                    <Stack direction='row' alignItems='center' gap={1}>
-                      <TextField
-                        fullWidth={true}
-                        name='message'
-                        label='Message'
-                        value={values.message}
-                        onChange={handleChange}
-                      />
-                      <Button variant='contained' type='submit'>
-                        Add
-                      </Button>
-                    </Stack>
-                  </Form>
-                )
-              }
-            </Formik>
+            {token !== undefined ? (
+              <PostMessageForm />
+            ) : (
+              <Button variant='contained' onClick={() => {
+                window.location.href = `${API_HOST}/login`
+              }}>
+                Login
+              </Button>
+            )}
             <Divider sx={{ margin: '1em' }} />
             <Typography variant='h6'>Messages:</Typography>
             <List>
