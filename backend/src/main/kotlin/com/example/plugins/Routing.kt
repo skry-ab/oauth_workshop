@@ -6,6 +6,7 @@ import io.ktor.http.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import io.ktor.client.*
 import io.ktor.response.*
 import io.ktor.request.*
 import kotlinx.serialization.Serializable
@@ -44,6 +45,23 @@ fun Application.configureRouting() {
             }
         }
 
+        //https://ktor.io/docs/oauth.html
+        oauth("oauth-google") {
+            urlProvider = { "http://localhost:8080/callback" }
+            providerLookup = {
+                OAuthServerSettings.OAuth2ServerSettings(
+                    name = "google",
+                    authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
+                    accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
+                    requestMethod = HttpMethod.Post,
+                    clientId = "REPLACE_ME",
+                    clientSecret = "REPLACE_ME",
+                    // Definition: https://developers.google.com/identity/protocols/oauth2/scopes#oauth2
+                    defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.email")
+                )
+            }
+            client = HttpClient()
+        }
     }
 
     routing {
@@ -64,20 +82,14 @@ fun Application.configureRouting() {
                 }
             }
         }
-    }
 
-    routing {
-        route("/api/messages")  {
-            get {
-                call.respond(messages)
+        authenticate("oauth-google") {
+            get("/login") {
+
             }
 
-            post {
-                val newMessage = call.receive<NewMessage>()
-                val message = Message(newMessage.message, "Unknown author")
-                messages.add(message)
+            get("/callback") {
 
-                call.respond(HttpStatusCode.Created, message)
             }
         }
     }
