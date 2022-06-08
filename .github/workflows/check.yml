@@ -1,0 +1,25 @@
+name: Check
+
+on:
+  pull_request:
+
+jobs:
+  backend_check:
+    name: Backend Check
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3.1.1
+        with:
+          java-version: '11'
+          distribution: 'zulu'
+      - name: Lint with KtLint
+        run: ./gradlew ktlintCheck
+      - name: Run tests
+        run: ./gradlew test
+      - name: Build with Gradle
+        run: ./gradlew build -x test
