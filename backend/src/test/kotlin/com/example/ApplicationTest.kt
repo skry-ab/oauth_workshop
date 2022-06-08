@@ -12,9 +12,9 @@ class ApplicationTest {
     @Test
     fun testRoot() {
         withTestApplication({ configureRouting() }) {
-            handleRequest(HttpMethod.Get, "/").apply {
+            handleRequest(HttpMethod.Get, "/api/ping").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals("Hello World!", response.content)
+                assertEquals("pong", response.content)
             }
         }
     }

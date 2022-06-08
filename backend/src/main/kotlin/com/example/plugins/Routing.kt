@@ -22,6 +22,12 @@ fun Application.configureRouting() {
     val messages = mutableListOf<Message>()
 
     routing {
+        route("/api/ping") {
+            get {
+                call.respond("pong")
+            }
+        }
+
         route("/api/messages") {
             get {
                 call.respond(messages)
