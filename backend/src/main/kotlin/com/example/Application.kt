@@ -1,12 +1,14 @@
 package com.example
 
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import com.example.plugins.*
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.serialization.*
+import com.example.plugins.configureRouting
+import io.ktor.application.install
+import io.ktor.features.CORS
+import io.ktor.features.ContentNegotiation
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.serialization.json
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
