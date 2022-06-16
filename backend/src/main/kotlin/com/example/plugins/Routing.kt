@@ -1,10 +1,14 @@
 package com.example.plugins
 
-import io.ktor.routing.*
-import io.ktor.http.*
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
+import io.ktor.application.Application
+import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.receive
+import io.ktor.response.respond
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.route
+import io.ktor.routing.routing
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,7 +22,13 @@ fun Application.configureRouting() {
     val messages = mutableListOf<Message>()
 
     routing {
-        route("/api/messages")  {
+        route("/api/ping") {
+            get {
+                call.respond("pong")
+            }
+        }
+
+        route("/api/messages") {
             get {
                 call.respond(messages)
             }

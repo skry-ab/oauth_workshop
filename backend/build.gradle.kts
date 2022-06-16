@@ -5,13 +5,23 @@ val logback_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.5.31"
-                id("org.jetbrains.kotlin.plugin.serialization") version "1.5.31"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.5.31"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "com.example"
 version = "0.0.1"
 application {
     mainClass.set("com.example.ApplicationKt")
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes(
+            mapOf("Main-Class" to application.mainClass)
+        )
+    }
 }
 
 repositories {
