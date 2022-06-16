@@ -24,7 +24,7 @@ fun Application.configureRouting() {
     routing {
         route("/api/ping") {
             get {
-                call.respond("pong")
+                call.respond("pang")
             }
         }
 
